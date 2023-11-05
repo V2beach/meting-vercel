@@ -1,11 +1,11 @@
 <?php
-require 'Meting.php';
+require 'vendor/autoload.php';
 use Metowolf\Meting;
 $api = new Meting($_GET['server']);
 $data = $api->playlist($_GET['id']);
 echo $data
 
-// require 'vendor/autoload.php';
+// 
 
 // Initialize to netease API
 // $api = new Meting('netease');
