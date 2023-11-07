@@ -96,8 +96,8 @@ switch ($_GET['type']){
 // echo $data;
 // {"url":"http:\/\/...","size":4729252,"br":128}
 
-
-function curl_file_get_contents($durl){  
+//不需要这个，只需要URL跳转
+function curl_file_get_contents($durl){
     $ch = curl_init();  
     curl_setopt($ch, CURLOPT_URL, $durl);  
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true) ; // 获取数据返回    
