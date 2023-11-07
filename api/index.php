@@ -26,18 +26,30 @@ switch ($_GET['type']){
                                 'pic' => "https://meting.v2beach.cn/api/index?server=netease&type=pic&id=" . ($pic_id),
                                 'lrc' => "https://meting.v2beach.cn/api/index?server=netease&type=lyric&id=" . ($lyric_id));
         }, $title, $author, $url_id, $pic_id, $lyric_id);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     break;
     case 'url':
-        $data = $api->format(true)->url($_GET['id']);
+        $raw = $api->format(true)->url($_GET['id']);
+        $data = json_decode($raw, true);
+        $data = $data['url'];
+        Header("Location:$data"); 
     break;
     case 'pic':
-        $data = $api->format(true)->pic($_GET['id']);
+        $raw = $api->format(true)->pic($_GET['id']);
+        $data = json_decode($raw, true);
+        $data = $data['url'];
+        // echo curl_file_get_contents($data);
+        // echo file_get_contents($data);
+        Header("Location:$data"); 
     break;
     case 'lyric':
-        $data = $api->format(true)->lyric($_GET['id']);
+        $raw = $api->format(true)->lyric($_GET['id']);
+        $data = json_decode($raw, true);
+        $data = $data['lyric'];
+        echo $data;
     break;
 }
-echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
 
 // foreach ($raw as $key => $value){
 //     echo $key;
@@ -83,5 +95,16 @@ echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 // echo $data;
 // {"url":"http:\/\/...","size":4729252,"br":128}
+
+
+function curl_file_get_contents($durl){  
+    $ch = curl_init();  
+    curl_setopt($ch, CURLOPT_URL, $durl);  
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true) ; // 获取数据返回    
+    curl_setopt($ch, CURLOPT_BINARYTRANSFER, true) ; // 在启用 CURLOPT_RETURNTRANSFER 时候将获取数据返回    
+    $r = curl_exec($ch);  
+    curl_close($ch);  
+    return $r;  
+} 
 
 ?>
