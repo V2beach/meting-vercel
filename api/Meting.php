@@ -1,19 +1,10 @@
 <?php
-/**
- * Meting music framework
- * https://i-meto.com
- * https://github.com/metowolf/Meting
- * Version 1.5.11.
- *
- * Copyright 2019, METO Sheel <i@i-meto.com>
- * Released under the MIT license
- */
 
 namespace Metowolf;
 
 class Meting
 {
-    const VERSION = '1.5.11';
+    const VERSION = '1.5.12';
 
     public $raw;
     public $data;
@@ -997,7 +988,8 @@ class Meting
         }
 
         if (extension_loaded('bcmath')) {
-            $skey = strrev(utf8_encode($skey));
+            // $skey = strrev(utf8_encode($skey));//if vercel php
+            $skey = strrev(mb_convert_encoding($skey, "UTF-8", mb_detect_encoding($skey)));// if php8
             $skey = $this->bchexdec($this->str2hex($skey));
             $skey = bcpowmod($skey, $pubkey, $modulus);
             $skey = $this->bcdechex($skey);
@@ -1432,6 +1424,10 @@ class Meting
             'lyric_id' => $data['id'],
             'source'   => 'netease',
         );
+        // $result = array(
+        //     'title' => $data['name'],
+        //     'author' => $data['artist']
+        // );
         if (isset($data['al']['picUrl'])) {
             preg_match('/\/(\d+)\./', $data['al']['picUrl'], $match);
             $result['pic_id'] = $match[1];

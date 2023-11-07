@@ -1,9 +1,65 @@
 <?php
+header('Content-Type:application/json; charset=utf-8');
 require 'Meting.php';
 use Metowolf\Meting;
 $api = new Meting($_GET['server']);
-$data = $api->playlist($_GET['id']);
-echo $data
+// echo gettype($api);
+
+switch ($_GET['type']){
+    case 'playlist':
+        $raw = $api->format(true)->playlist($_GET['id']);
+        // exit(json_encode($data));
+        // echo $raw;
+        $raw = json_decode($raw, true);//gettype可以发现不加true会返回object，https://www.php.net/manual/zh/function.json-decode.php
+        $title = array_column($raw, 'name');
+        // echo json_encode($title, JSON_UNESCAPED_UNICODE);
+        $author = array_column($raw, 'artist');
+        $url_id = array_column($raw, 'url_id');
+        $pic_id = array_column($raw, 'pic_id');
+        $lyric_id = array_column($raw, 'lyric_id');
+
+        $data = array_map(function($title, $author, $url_id, $pic_id, $lyric_id){
+            // $api = new Meting($_GET['server']);
+            return array('title' => $title,
+                                'author' => implode(" / ", $author),
+                                'url' => "https://meting.v2beach.cn/api/index?server=netease&type=url&id=" . ($url_id),
+                                'pic' => "https://meting.v2beach.cn/api/index?server=netease&type=pic&id=" . ($pic_id),
+                                'lrc' => "https://meting.v2beach.cn/api/index?server=netease&type=lyric&id=" . ($lyric_id));
+        }, $title, $author, $url_id, $pic_id, $lyric_id);
+    break;
+    case 'url':
+        $data = $api->format(true)->url($_GET['id']);
+    break;
+    case 'pic':
+        $data = $api->format(true)->pic($_GET['id']);
+    break;
+    case 'lyric':
+        $data = $api->format(true)->lyric($_GET['id']);
+    break;
+}
+echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+// foreach ($raw as $key => $value){
+//     echo $key;
+//     echo "\n===\n";
+//     echo json_encode($value);
+//     echo "\n===\n";
+//     echo $value['name'];
+//     echo "\n===\n";
+// }
+
+// $fmt = array(
+//     'title' => $raw[0]['name'],
+//     'author' => $raw[0]['artist'],
+// );
+// echo json_encode($fmt, JSON_UNESCAPED_UNICODE);//JSON_UNESCAPED_UNICODE中文不变/u的UNICODE
+
+// $data = $api->format(true)->url(553534151);
+// // echo $data['url'];
+// echo $data;
+// echo "\n";
+// $data = $api->format(false)->url(553534151);
+// echo $data;
 
 // require 'vendor/autoload.php';
 
